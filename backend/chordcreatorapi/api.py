@@ -83,8 +83,9 @@ def chord(sheetId, chordId):
         return jsonify({"msg": f"Chord {chordId} has been deleted from Sheet {sheetId}."}), 201
 
 
-@api.route('/sheets/<int:sheetId>/<int:chordId>/inversions/')
-def get_inversions(sheetId, chordId):
-    inversion_list = db.session.query(Inversion).join(Chord).join(
-        Sheet).filter(Chord.id == chordId).filter(Sheet.id == sheetId).all()
-    return jsonify({"inversions": [inversion.to_dict() for inversion in inversion_list]})
+@api.route('/sheets/<int:sheetId>/<int:chordId>/<int:inversionId/')
+def get_inversion(sheetId, chordId, inversionId):
+    inversion = db.session.query(Inversion).join(Chord).join(
+        Sheet).filter(Chord.id == chordId).filter(Sheet.id == sheetId).filter(
+            Inversion.id == inversionId).first()
+    return jsonify({"inversion": inversion.to_dict()})
