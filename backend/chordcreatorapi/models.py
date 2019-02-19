@@ -15,7 +15,8 @@ class Sheet(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    chords = db.relationship('Chord', backref="sheet", lazy=False)
+    chords = db.relationship('Chord', backref="sheet",
+                             cascade="all, delete-orphan", lazy=False)
 
     def to_dict(self):
         return dict(id=self.id,
@@ -32,7 +33,8 @@ class Chord(db.Model):
     major = db.Column(db.String(500))
     minor = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    sheet_id = db.Column(db.Integer, db.ForeignKey('sheets.id'))
+    sheet_id = db.Column(db.Integer, db.ForeignKey(
+        'sheets.id', ondelete='CASCADE'))
     inversions = db.relationship('Inversion', backref='chord', lazy=False)
 
     def to_dict(self):
