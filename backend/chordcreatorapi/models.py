@@ -12,7 +12,7 @@ db = SQLAlchemy()
 class Sheet(db.Model):
     __tablename__ = 'sheets'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     chords = db.relationship('Chord', backref="sheet", lazy=False)
@@ -27,8 +27,8 @@ class Sheet(db.Model):
 class Chord(db.Model):
     __tablename__ = 'chords'
 
-    id = db.Column(db.Integer, primary_key=True),
-    root = db.Column(db.string(2), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    root = db.Column(db.String(2), nullable=False)
     major = db.Column(db.String(500))
     minor = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -48,7 +48,7 @@ class Chord(db.Model):
 class Inversion(db.Model):
     __tablename__ = 'inversions'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
     notes = db.Column(db.String(500), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

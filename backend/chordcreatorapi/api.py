@@ -29,20 +29,20 @@ def get_sheet(id):
     return jsonify({'sheet': sheet.to_dict()})
 
 
-@api.route('/new-sheet/', methods=('POST'))
+@api.route('/new-sheet/', methods=("POST", "PUT"))
 def new_sheet():
     if request.method == 'POST':
-        data = request.json()
+        data = request.json
         sheet = Sheet(name=data['name'])
         chords = []
         for c in data['chords']:
             root_note = c['root']
             chord = Chord(root=root_note)
-            chord.major = major = major(root_note)
+            chord.major = major(root_note)
             chord.minor = minor(root_note)
-            inversion_list = inversions(c['root'])
-            chord.inversions = [Inversion(name=str(inversion_list.index(
-                i)), notes=(i)) for i in inversion_list]
+            inversion_list = inversions(root_note)
+            chord.inversions = [Inversion(name=str(i), notes=notes)
+                                for i, notes in enumerate(inversion_list)]
             chords.append(chord)
         sheet.chords = chords
         db.session.add(sheet)
