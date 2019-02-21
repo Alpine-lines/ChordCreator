@@ -6,7 +6,7 @@ api.py
 
 from flask import Blueprint, jsonify, request
 from .models import db, Sheet, Chord, Inversion
-from packages.chord_sheets import major, minor, inversions
+from modules.chord_sheets import major, minor, inversions
 from datetime import datetime
 
 api = Blueprint('api', __name__)
@@ -83,7 +83,7 @@ def chord(sheetId, chordId):
         return jsonify({"msg": f"Chord {chordId} has been deleted from Sheet {sheetId}."}), 201
 
 
-@api.route('/sheets/<int:sheetId>/<int:chordId>/<int:inversionId/')
+@api.route('/sheets/<int:sheetId>/<int:chordId>/<int:inversionId>/')
 def get_inversion(sheetId, chordId, inversionId):
     inversion = db.session.query(Inversion).join(Chord).join(
         Sheet).filter(Chord.id == chordId).filter(Sheet.id == sheetId).filter(

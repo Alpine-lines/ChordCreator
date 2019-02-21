@@ -2,7 +2,18 @@
 
 import Vue from "vue";
 import Vuex from "vuex";
-import { fetchSheets, createNewSheet } from "../api";
+
+import {
+  fetchSheets,
+  fetchSheet,
+  createNewSheet,
+  deleteSheet,
+  fetchChord,
+  createNewChord,
+  updateChord,
+  deleteChord,
+  getInversion
+} from "../api";
 
 Vue.use(Vuex);
 
@@ -27,7 +38,7 @@ const actions = {
       });
   },
   loadSheet(context, { sheetId }) {
-    return fetchSurvey(sheetId)
+    return fetchSheet(sheetId)
       .then(response => {
         //console.log(response)
         context.commit("setSheet", { sheet: response.data });
@@ -144,6 +155,9 @@ const mutations = {
 
 const getters = {
   // reusable data accessors
+  getSheets: state => {
+    return state.sheets;
+  }
 };
 
 const store = new Vuex.Store({

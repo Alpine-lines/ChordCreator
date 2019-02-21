@@ -15,7 +15,7 @@ export function fetchSheet(sheetId) {
   return axios.get(`${API_URL}/sheets/${sheetId}/`);
 }
 
-export function getChord(sheetId, chordId) {
+export function fetchChord(sheetId, chordId) {
   return axios.get(`${API_URL}/${sheetId}/${chordId}`);
 }
 
