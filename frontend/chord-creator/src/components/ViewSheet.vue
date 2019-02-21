@@ -19,9 +19,8 @@
               <!-- new v-show directive -->
               <div class="column is-offset-3 is-6">
                 <!-- <h4 class='title'>{{ idx }}) {{ question.text }}</h4> -->
-                <h4 class="title has-text-centered">Root Note: {{ chord.root }}</h4>
-                <h2 class="title has-text-centered">Major Chords: {{ chord.major }}</h2>
-                <h2 class="title has-text-centered">Minor Chords: {{ chord.minor }}</h2>
+                <h4 class="title has-text-centered">Name: {{ chord.name }}</h4>
+                <h2 class="title has-text-centered">Notes: {{ chord.notes }}</h2>
               </div>
               <div class="column is-offset-4 is-4">
                 <div class="control">

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 65237cb9e106
+Revision ID: dde576060b1e
 Revises: 
-Create Date: 2019-02-18 20:37:01.004758
+Create Date: 2019-02-21 13:22:23.521482
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '65237cb9e106'
+revision = 'dde576060b1e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,12 +26,12 @@ def upgrade():
     )
     op.create_table('chords',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('root', sa.String(length=2), nullable=False),
-    sa.Column('major', sa.String(length=500), nullable=True),
-    sa.Column('minor', sa.String(length=500), nullable=True),
+    sa.Column('name', sa.String(length=2), nullable=False),
+    sa.Column('notes', sa.String(length=500), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('sheet_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['sheet_id'], ['sheets.id'], ),
+    sa.ForeignKeyConstraint(['sheet_id'], ['sheets.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('inversions',

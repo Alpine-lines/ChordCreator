@@ -6,10 +6,16 @@ api.py
 
 from flask import Blueprint, jsonify, request
 from .models import db, Sheet, Chord, Inversion
-from modules.chord_sheets import major, minor, inversions
-from datetime import datetime
+from music21 import *
+from mingus.core import chords as ch
+from datetime import datetime as dt
 
 api = Blueprint('api', __name__)
+
+
+@api.route('/test/')
+def test():
+    return jsonify({"C": ch.from_shorthand("C")})
 
 
 @api.route('/sheets/', methods=('GET', 'POST'))
@@ -22,12 +28,16 @@ def sheets():
         sheet = Sheet(name=data['name'])
         chords = []
         for c in data['chords']:
-            root_note = c['root']
-            chord = Chord(root=root_note)
-            chord.major = major(root_note)
-            chord.minor = minor(root_note)
+            shorthand_notation = c['name']
+            chord = Chord(name=shorthand_notation)
+            chord.notes = ' '.join(ch.from_shorthand(shorthand_notation))
+            print(chord.notes)
+            inversions = [' '.join(ch.first_inversion(chord.notes.split(' '))),
+                          ' '.join(ch.second_inversion(
+                              chord.notes.split(' '))),
+                          ' '.join(ch.third_inversion(chord.notes.split(' ')))]
             chord.inversions = [Inversion(name=str(i), notes=notes)
-                                for i, notes in enumerate(inversions(root_note))]
+                                for i, notes in enumerate(inversions)]
             chords.append(chord)
         sheet.chords = chords
         db.session.add(sheet)
@@ -42,18 +52,29 @@ def sheet(sheetId):
         return jsonify({'sheet': sheet.to_dict()})
     elif request.method == 'PUT':
         data = request.json
-        root_note = data['root']
-        chord = Chord(root=root_note, sheet_id=sheetId)
-        chord.root = root_note
-        chord.major = major(root_note)
-        chord.minor = minor(root_note)
+        shorthand_notation = data['name']
+        chord = Chord(name=shorthand_notation, sheet_id=sheetId)
+        chord.name = shorthand_notation
+        chord.notes = ' '.join(ch.from_shorthand(shorthand_notation))
+        inversions = [' '.join(ch.first_inversion(chord.notes.split(' '))),
+                      ' '.join(ch.second_inversion(
+                          chord.notes.split(' '))),
+                      ' '.join(ch.third_inversion(chord.notes.split(' ')))]
         chord.inversions = [Inversion(name=str(i), notes=notes)
-                            for i, notes in enumerate(inversions(root_note))]
+                            for i, notes in enumerate(inversions)]
+        chord.updated_at = dt.utcnow()
         db.session.add(chord)
         db.session.commit()
         return jsonify(chord.to_dict()), 201
     elif request.method == 'DELETE':
+        chordIds = [chord.id for chord in db.session.query(Chord).join(
+            Sheet).filter(Sheet.id == sheetId).all()]
         db.session.query(Sheet).filter(Sheet.id == sheetId).delete()
+        for id in chordIds:
+            db.session.query(Chord).filter(
+                Chord.sheet_id == sheetId).filter(Chord.id == id).delete()
+            db.session.query(Inversion).filter(
+                Inversion.chord_id == id).delete()
         db.session.commit()
         return jsonify({"msg": f"Sheet {sheetId} has been deleted."}), 201
 
@@ -68,17 +89,23 @@ def chord(sheetId, chordId):
         data = request.json
         chord = db.session.query(Chord).join(Sheet).filter(
             Sheet.id == sheetId).filter(Chord.id == chordId).first()
-        root_note = data['root']
-        chord.root = root_note
-        chord.major = major(root_note)
-        chord.minor = minor(root_note)
+        shorthand_notation = data['name']
+        chord.name = shorthand_notation
+        chord.notes = ' '.join(ch.from_shorthand(shorthand_notation))
+        inversions = [' '.join(ch.first_inversion(chord.notes.split(' '))),
+                      ' '.join(ch.second_inversion(
+                          chord.notes.split(' '))),
+                      ' '.join(ch.third_inversion(chord.notes.split(' ')))]
         chord.inversions = [Inversion(name=str(i), notes=notes)
-                            for i, notes in enumerate(inversions(root_note))]
+                            for i, notes in enumerate(inversions)]
+        chord.updated_at = dt.utcnow()
         db.session.commit()
         return jsonify(chord.to_dict()), 201
     elif request.method == 'DELETE':
         db.session.query(Chord).filter(
             Chord.sheet_id == sheetId).filter(Chord.id == chordId).delete()
+        db.session.query(Inversion).filter(
+            Inversion.chord_id == chordId).delete()
         db.session.commit()
         return jsonify({"msg": f"Chord {chordId} has been deleted from Sheet {sheetId}."}), 201
 

@@ -29,20 +29,21 @@ class Chord(db.Model):
     __tablename__ = 'chords'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    root = db.Column(db.String(2), nullable=False)
-    major = db.Column(db.String(500))
-    minor = db.Column(db.String(500))
+    name = db.Column(db.String(2), nullable=False)
+    notes = db.Column(db.String(500))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=None)
     sheet_id = db.Column(db.Integer, db.ForeignKey(
         'sheets.id', ondelete='CASCADE'))
     inversions = db.relationship('Inversion', backref='chord', lazy=False)
 
     def to_dict(self):
         return dict(id=self.id,
-                    root=self.root,
-                    major=self.major,
-                    minor=self.minor,
+                    name=self.name,
+                    notes=self.notes,
                     created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    updated_at=self.updated_at.strftime(
+                        '%Y-%m-%d %H:%M:%S') if self.updated_at != None else None,
                     sheet_id=self.sheet_id,
                     inversions=[inversion.to_dict() for inversion in self.inversions])
 

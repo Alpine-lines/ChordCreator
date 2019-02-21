@@ -3,12 +3,12 @@ notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 def major(root):
     index = notes.index(root)
-    return f'{root} {notes[(index+3) % 12]} {notes[(index+7) % 12]} - {root}  {notes[(index+7) % 12]} {notes[(index+3) % 12]}'
+    return f'{root} {notes[(index+4) % 12]} {notes[(index+7) % 12]} - {root}  {notes[(index+7) % 12]} {notes[(index+4) % 12]}'
 
 
 def minor(root):
     index = notes.index(root)
-    return f'{root} {notes[(index+3) % 12]} {notes[(index+7) % 12]} - {root}  {notes[(index+7) % 12]} {notes[(index+3) % 12]}'
+    return f'{root} {notes[(index+3) % 12]} {notes[(index+3) % 12]} - {root}  {notes[(index+7) % 12]} {notes[(index+3) % 12]}'
 
 
 def inversions(root):
