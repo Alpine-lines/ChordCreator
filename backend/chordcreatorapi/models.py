@@ -17,12 +17,14 @@ class Sheet(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     chords = db.relationship('Chord', backref="sheet",
                              cascade="all, delete-orphan", lazy=False)
+    navIsOpen = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
         return dict(id=self.id,
                     name=self.name,
                     created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                    chords=[chord.to_dict() for chord in self.chords])
+                    chords=[chord.to_dict() for chord in self.chords],
+                    navIsOpen=self.navIsOpen)
 
 
 class Chord(db.Model):
